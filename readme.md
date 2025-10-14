@@ -17,3 +17,13 @@ source .venv/bin/activate
 python -m src.main
 ```
 And ``python -m Tools.GUI`` to draw to the display directly.
+
+## External Docs
+
+### Zigbee
+
+https://www.zigbee2mqtt.io/devices/TZ3210_iw0zkcu8.html
+
+### Sonoff
+
+https://help.sonoff.tech/docs/DIY-MODE-API-PROTOCOL

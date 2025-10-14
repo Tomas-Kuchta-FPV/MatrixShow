@@ -2,6 +2,11 @@
 AI magic code
 A simple Tkinter GUI to control an LED matrix defined in config.py.
 Each LED is represented as a rectangle that can be toggled on/off by clicking.
+
+Install deps by running:
+sudo dnf install python3-tkinter
+Run it with:
+python -m Tools.GUI
 """
 
 import threading
