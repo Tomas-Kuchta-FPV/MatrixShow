@@ -3,6 +3,8 @@ MQTT_PORT = 1883
 MQTT_USER = "mqtt"
 MQTT_PASS = "ChytreMQTT"
 
+TESTING = True  # If True, do not actually send MQTT messages
+
 MQTT_PYTHON_ZIGBEE2MQTT_TOPIC = "zigbee2mqtt/{DeviceName}/set"
 
 MQTT_PYTHON_INFO_TOPIC = "python/info"
