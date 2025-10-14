@@ -22,6 +22,7 @@ class LEDMatrixGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("LED Matrix Display")
+        self.Bulk_Operation = False
 
         if not matrix or not matrix[0]:
             raise RuntimeError("matrix in config.py is empty or malformed")
@@ -105,75 +106,68 @@ class LEDMatrixGUI:
         if entry:
             self.canvas.itemconfig(entry["rect"], fill="orange")
 
-    def _start_bulk(self):
-        """Try to acquire the bulk operation lock. If lock is acquired, disable bulk buttons and
-        return True. If not, return False (caller should ignore the request).
-        """
-        acquired = self.bulk_lock.acquire(blocking=False)
-        if not acquired:
-            return False
-        # disable bulk buttons on the GUI thread
-        def _disable():
-            self.on_all_btn.config(state=tk.DISABLED)
-            self.off_all_btn.config(state=tk.DISABLED)
-            self.refresh_btn.config(state=tk.DISABLED)
-        self.root.after(0, _disable)
-        return True
+    def start_bulk_operation(self):
+        self.bulk_lock.acquire()
+        self.on_all_btn.config(state=tk.DISABLED)
+        self.off_all_btn.config(state=tk.DISABLED)
+        self.refresh_btn.config(state=tk.DISABLED)
 
-    def _end_bulk(self):
-        """Release the bulk lock and re-enable buttons."""
-        def _enable():
-            self.on_all_btn.config(state=tk.NORMAL)
-            self.off_all_btn.config(state=tk.NORMAL)
-            self.refresh_btn.config(state=tk.NORMAL)
-        # re-enable on GUI thread
-        self.root.after(0, _enable)
-        try:
-            self.bulk_lock.release()
-        except RuntimeError:
-            # already released or not acquired; ignore
-            pass
+    def end_bulk_operation(self):
+        self.on_all_btn.config(state=tk.NORMAL)
+        self.off_all_btn.config(state=tk.NORMAL)
+        self.refresh_btn.config(state=tk.NORMAL)
+        self.bulk_lock.release()
 
     def turn_all_on(self):
         # Prevent concurrent bulk ops
-        if not self._start_bulk():
+        if getattr(self, "bulk_lock", None) and self.bulk_lock.locked():
             return
-        # Run hardware call in background and update UI when done
-        self._spawn(self._do_turn_all_on)
+        self.start_bulk_operation()
 
-    def _do_turn_all_on(self):
-        try:
-            set_all_on_ct(DEFAULT_COLOR_TEMP, DEFAULT_BRIGHTNESS, delay=5)
-        except Exception as e:
-            print(f"Error in set_all_on_ct: {e}")
-        finally:
-            # update UI: mark all as on (or leave as-is if you prefer reading state)
+        def _worker():
+            try:
+                # perform the potentially slow hardware calls off the GUI thread
+                set_all_on_ct(DEFAULT_COLOR_TEMP, DEFAULT_BRIGHTNESS, delay=5)
+            except Exception as e:
+                print(f"Error during turn_all_on: {e}")
+                # ensure buttons are re-enabled even on error
+                self.root.after(0, self.end_bulk_operation)
+                return
+
             def _mark_on():
                 for entry in self.leds.values():
                     entry["state"] = True
                     self._set_rect_color(entry["rect"], True)
+                # re-enable buttons and release lock on the GUI thread
+                self.end_bulk_operation()
+
             self.root.after(0, _mark_on)
-            # release lock and re-enable buttons
-            self._end_bulk()
+
+        self._spawn(_worker)
 
     def turn_all_off(self):
         # Prevent concurrent bulk ops
-        if not self._start_bulk():
+        if getattr(self, "bulk_lock", None) and self.bulk_lock.locked():
             return
-        self._spawn(self._do_turn_all_off)
+        self.start_bulk_operation()
 
-    def _do_turn_all_off(self):
-        try:
-            set_all_off(delay=5)
-        except Exception as e:
-            print(f"Error in set_all_off: {e}")
-        finally:
+        def _worker():
+            try:
+                set_all_off(delay=5)
+            except Exception as e:
+                print(f"Error during turn_all_off: {e}")
+                self.root.after(0, self.end_bulk_operation)
+                return
+
             def _mark_off():
                 for entry in self.leds.values():
                     entry["state"] = False
                     self._set_rect_color(entry["rect"], False)
+                self.end_bulk_operation()
+
             self.root.after(0, _mark_off)
-            self._end_bulk()
+
+        self._spawn(_worker)
 
     def refresh_display(self):
         # There's no read-back API in led_hal; assume OFF for safety.
