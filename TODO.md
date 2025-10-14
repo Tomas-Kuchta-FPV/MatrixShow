@@ -4,7 +4,7 @@
  - [x] Write my own code
 
  - [x] Implement a framework for the matrix
- - [ ] Implement Preview mode
+ - [x] Implement Preview mode - its just one way for now
  - [ ] Write HAl for Sonoff DIY mode as I won't be using zigbee
  - [ ] Implement more LightEffects
  - [ ] Make a pretty light show ;)
