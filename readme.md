@@ -16,3 +16,4 @@ python -m pip install -r requirements.txt
 source .venv/bin/activate
 python -m src.main
 ```
+And ``python -m Tools.GUI`` to draw to the display directly.
