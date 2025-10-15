@@ -9,9 +9,10 @@ from .LightEffects.random import random_effect
 def main():
     init() # Initialize the application
 
+
 def everything():
     print("Everything is going to run!")
-    blink_all(500, 3, 1, 10) ## Can be used for this
+    blink_all(500, 3, 1, 10)
     for i in range(5):
         random_effect(2)
     set_all_off(10)  # Ensure all bulbs are off at the end
