@@ -8,6 +8,7 @@ from .LightEffects.random import random_effect
 
 def main():
     init() # Initialize the application
+    everything()
 
 
 def everything():

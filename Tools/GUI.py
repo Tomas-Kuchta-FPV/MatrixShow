@@ -14,7 +14,7 @@ import tkinter as tk
 from functools import partial
 
 from src.config import matrix
-from src.led_hal import init_leds, set_bulb_on_ct, set_bulb_off, set_all_on_ct, set_all_off
+from src.led_hal import init_leds, set_bulb_on_ct, set_bulb_off, set_all_on_ct, set_all_off, get_state
 
 # Default visual settings
 LED_SIZE = 48
@@ -73,6 +73,24 @@ class LEDMatrixGUI:
 
         # Lock to prevent concurrent bulk operations (turn_all_on / turn_all_off)
         self.bulk_lock = threading.Lock()
+
+        # Sync initial display with real LED states
+        try:
+            self.refresh_display()
+        except Exception as e:
+            # Don't crash the GUI if hardware state isn't available
+            print(f"refresh_display failed during init: {e}")
+
+        # Schedule periodic refresh so multiple processes (main and GUI) stay in sync.
+        # Runs on the Tk mainloop thread every 1000ms.
+        self._schedule_periodic_refresh()
+
+    def _schedule_periodic_refresh(self, interval_ms: int = 100):
+        try:
+            self.refresh_display()
+        finally:
+            # re-schedule
+            self.root.after(interval_ms, self._schedule_periodic_refresh)
 
     def _spawn(self, fn, *args, **kwargs):
         """Run fn in a background thread to avoid blocking the GUI."""
@@ -175,10 +193,21 @@ class LEDMatrixGUI:
         self._spawn(_worker)
 
     def refresh_display(self):
-        # There's no read-back API in led_hal; assume OFF for safety.
-        for entry in self.leds.values():
-            entry["state"] = False
-            self._set_rect_color(entry["rect"], False)
+        # Read the stored state from led_hal.get_state() and update the GUI.
+        try:
+            led_state = get_state() or {}
+        except Exception:
+            led_state = {}
+
+        for (row, col), entry in self.leds.items():
+            # led_state uses (x,y) == (col,row)
+            bulb = led_state.get((col, row))
+            is_on = False
+            if bulb and bulb.get("state") == "ON":
+                is_on = True
+
+            entry["state"] = is_on
+            self._set_rect_color(entry["rect"], is_on)
 
 
 def main():
