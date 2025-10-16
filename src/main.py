@@ -5,18 +5,21 @@ from .led_hal import set_all_off
 ## Import light effects
 from .LightEffects.blink_all import blink_all
 from .LightEffects.random import random_effect
+from .LightEffects.checkered import checkered
 
 def main():
     init() # Initialize the application
+    checkered(400, 5)
     everything()
 
 
 def everything():
     print("Everything is going to run!")
     blink_all(500, 3, 1, 10)
-    for i in range(5):
-        random_effect(2)
-    set_all_off(10)  # Ensure all bulbs are off at the end
+    for i in range(200):
+        random_effect(0.2)
+    sleep(1)
+    checkered(400, 5, 0.5)
 
 
 # Call main function
