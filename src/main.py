@@ -9,12 +9,11 @@ from .LightEffects.checkered import checkered
 
 def main():
     init() # Initialize the application
-    checkered(400, 5)
-    everything()
+    everything() # Run all effects
 
 
 def everything():
-    print("Everything is going to run!")
+    print("Evhery Effect is going to run ;)")
     blink_all(500, 3, 1, 10)
     for i in range(200):
         random_effect(0.2)
