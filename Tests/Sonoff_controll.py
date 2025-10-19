@@ -80,6 +80,12 @@ def get_state():
         "deviceid": params.get("deviceid")
     }
 
+'''
+Bounds:
+Brightness: 1-100
+Color temperature: 0-100
+RGB: 0-255?
+'''
 
 if __name__ == "__main__":
     power(False, 10)
