@@ -23,7 +23,7 @@ import requests # pip install requests
 import json
 from time import sleep
 
-DELAY = 0.5
+DELAY = 1
 DEVICE_IP = "192.168.1.221"   # change if your DHCP changes it
 BASE_URL = f"http://{DEVICE_IP}:8081/zeroconf"
 
@@ -43,16 +43,13 @@ def send(endpoint, data):
 def power(on: bool, ms: int):
     send("switch", {"switch": "on" if on else "off", "slowlyLit": ms, "slowlyDimmed": ms})
 
-def set_brightness(brightness: int):
-    # ltype must be explicitly "white"
-    send("dimmable", {"ltype": "white", "white": {"br": brightness, "ct": 0}})
-
-def set_color_temp(ct: int):
+def color_temp(brightness: int, ct: int, ms: int):
     # 0 = cold white, 255 = warm white (yes, reversed vs Kelvin)
-    send("dimmable", {"ltype": "white", "white": {"br": 100, "ct": ct}})
+    send("dimmable", {"ltype": "white", "white": {"br": brightness, "ct": ct, "slowlyLit": ms, "slowlyDimmed": ms}})
 
-def set_rgb(r: int, g: int, b: int):
-    send("dimmable", {"ltype": "color", "color": {"br": 100, "r": r, "g": g, "b": b}})
+
+def rgb(brightness: int, r: int, g: int, b: int, ms: int):
+    send("dimmable", {"ltype": "color", "color": {"br": brightness, "r": r, "g": g, "b": b, "slowlyLit": ms, "slowlyDimmed": ms}})
 
 
 def get_state():
@@ -85,14 +82,10 @@ def get_state():
 
 
 if __name__ == "__main__":
-    power(False)             # Turn ON
+    power(False, 10)
     sleep(DELAY)
-    power(True)             # Turn ON
+    power(True, 10)
     sleep(DELAY)
-    set_brightness(50)      # 50% brightness
+    color_temp(100, 100, 100)
     sleep(DELAY)
-    set_color_temp(80)      # cooler white
-    sleep(DELAY)
-    set_rgb(255, 0, 128)    # magenta-ish for test
-    sleep(DELAY)
-    print(get_state())
+    rgb(100, 255, 0, 128, 100)
