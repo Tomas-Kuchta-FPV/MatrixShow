@@ -1,9 +1,9 @@
-from .config import TESTING
-from .config import MQTT_BROKER, MQTT_PORT, MQTT_USER, MQTT_PASS, MQTT_PYTHON_INFO_TOPIC
+from ..config import DEBUG_PRINTS
+from ..config import MQTT_BROKER, MQTT_PORT, MQTT_USER, MQTT_PASS, MQTT_PYTHON_INFO_TOPIC
 import json
 import paho.mqtt.client as mqtt
 
-
+MQTT_DEBUG = False
 
 
 def mqtt_init(keepalive: int = 60) -> "mqtt.Client":
@@ -21,16 +21,16 @@ def mqtt_init(keepalive: int = 60) -> "mqtt.Client":
 
     client.connect(MQTT_BROKER, MQTT_PORT, keepalive)
     client.loop_start()
-    mqtt_send(MQTT_PYTHON_INFO_TOPIC, {"status": "MQTT Initialized"})
+    send(MQTT_PYTHON_INFO_TOPIC, {"status": "MQTT Initialized"})
     print("MQTT initialized")
     return client
 
-def mqtt_send(topic: str, payload: dict) -> "mqtt.MQTTMessageInfo":
+def send(topic: str, payload: dict) -> "mqtt.MQTTMessageInfo":
     """Send a message to the MQTT broker."""
     if client is None:
         raise RuntimeError("MQTT client is not initialized")
     info = client.publish(topic, json.dumps(payload))  # Implement resending when fails
-    print(f"Published to {topic}: {payload}")
+    if MQTT_DEBUG: print(f"Published to {topic}: {payload}")
     return info
 
 

@@ -1,6 +1,6 @@
 from time import sleep
 from .init import init
-from .led_hal import set_all_off
+# from .led_hal import set_all_off, set_bulb_on_ct, set_bulb_off
 
 ## Import light effects
 from .LightEffects.blink_all import blink_all
@@ -13,12 +13,11 @@ def main():
 
 
 def everything():
-    print("Evhery Effect is going to run ;)")
-    blink_all(500, 3, 1, 10)
-    for i in range(200):
-        random_effect(0.2)
+    print("EFFECT: Evhery Effect is going to run ;)")
+    blink_all(100, 3, 1, 10)
+    random_effect(0.2, 200)
     sleep(1)
-    checkered(400, 5, 0.5)
+    checkered(100, 5, 0.5)
 
 
 # Call main function

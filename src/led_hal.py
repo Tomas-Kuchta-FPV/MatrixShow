@@ -1,6 +1,7 @@
-from .config import matrix, MQTT_PYTHON_ZIGBEE2MQTT_TOPIC, MQTT_Enabled
-from .mqtt import mqtt_send
+from .config import matrix, MQTT_PYTHON_ZIGBEE2MQTT_TOPIC, MQTT_ENABLED, DEBUG_PRINTS, SONOFF_ENABLED, SONOFF_MS
 from time import sleep
+
+from .Protocols import Sonoff_DIY_mode, mqtt
 
 import json
 import os
@@ -43,24 +44,33 @@ def set_bulb_on_ct(x, y, color_temp, brightness):
     """Set bulb at position (x, y) to given temperature and brightness.
     x: column index (0-based)
     y: row index (0-based)
-    color_temp: color temperature in Kelvin (153-500)
-    brightness: brightness level (0-254)
+    color_temp: color temperature (0-100) 0 is the coolest, 100 is the warmest
+    brightness: brightness level (1-100)
     """
 
     # bounds check
-    if brightness < 0 or brightness > 100:
-        raise ValueError("brightness must be between 0 and 254")
-    if color_temp < 153 or color_temp > 500:
-        raise ValueError("color_temp must be between 153 and 500")
+    if brightness < 1 or brightness > 100:
+        raise ValueError(f"brightness is set {brightness} and must be between 1 and 100")
+    if color_temp < 0 or color_temp > 100: # 0 is the coolest, 100 is the warmest
+        raise ValueError(f"color_temp is set {color_temp_sonoff} and must be between 0 and 100")
     if y < 0 or y >= len(matrix) or x < 0 or x >= len(matrix[0]):
         raise IndexError("x,y out of range")
 
-    if MQTT_Enabled is True:
+    if DEBUG_PRINTS:
+        print(f"DEBUG_PRINTS: set_bulb_on_ct({x}, {y}, {color_temp}, {brightness})")
+
+    if MQTT_ENABLED is True:
         brightness_mqtt = map_range(brightness, 0, 100, 0, 254)
-        payload = {"color_temp": color_temp, "brightness": brightness_mqtt, "state": "ON"}
+        color_temp_mqtt = map_range(color_temp, 0, 100, 153, 500)
+        payload = {"color_temp": color_temp_mqtt, "brightness": brightness_mqtt, "state": "ON"}
 
         topic = MQTT_PYTHON_ZIGBEE2MQTT_TOPIC.format(DeviceName=matrix[y][x])
-        mqtt_send(topic, payload)
+        mqtt.send(topic, payload)
+
+    if SONOFF_ENABLED is True:
+        color_temp_sonoff = map_range(color_temp, 0, 100, 100, 0)
+        Sonoff_DIY_mode.color_temp(matrix[y][x], brightness, color_temp_sonoff, SONOFF_MS) # Prime it
+        Sonoff_DIY_mode.power(matrix[y][x], True, SONOFF_MS) # Turn it on
 
     # persist state for future reference
     LED_STATE[(x, y)] = {
@@ -86,11 +96,17 @@ def set_bulb_off(x, y):
     # bounds check
     if y < 0 or y >= len(matrix) or x < 0 or x >= len(matrix[0]):
         raise IndexError("x,y out of range")
+    
+    if DEBUG_PRINTS is True:
+        print(f"DEBUG_PRINTS: set_bulb_off({x}, {y})")
 
-    if MQTT_Enabled is True:
+    if MQTT_ENABLED is True:
         payload = {"state": "OFF"}
         topic = MQTT_PYTHON_ZIGBEE2MQTT_TOPIC.format(DeviceName=matrix[y][x])
-        mqtt_send(topic, payload)
+        mqtt.send(topic, payload)
+
+    if SONOFF_ENABLED is True:
+        Sonoff_DIY_mode.power(matrix[y][x], False, SONOFF_MS)
 
     # persist state for future reference; keep last known color_temp/brightness if present
     prev = LED_STATE.get((x, y), {})

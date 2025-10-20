@@ -16,6 +16,8 @@ def blink_all(color_temp: int, brightness: int, blink_count: int = 2, blink_dela
 
     width, height = led_hal.XY
 
+    print("EFFECT: blink_all()")
+
     for _ in range(blink_count):
         led_hal.set_all_on_ct(color_temp, brightness, blink_delay)
         led_hal.set_all_off(blink_delay)

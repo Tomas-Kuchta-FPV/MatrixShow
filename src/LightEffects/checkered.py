@@ -10,6 +10,8 @@ def checkered(color_temp: int, brightness: int, delay: float = 0.1):
     # led_hal.XY is a (width, height) tuple; unpack it directly
     width, height = led_hal.XY
 
+    print("EFFECT: checkered()")
+
     for y in range(height):
         for x in range(width):
             sleep(delay)

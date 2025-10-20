@@ -24,7 +24,7 @@ import json
 from time import sleep
 
 DELAY = 1
-DEVICE_IP = "192.168.1.221"   # change if your DHCP changes it
+DEVICE_IP = "192.168.22.221"   # change if your DHCP changes it
 BASE_URL = f"http://{DEVICE_IP}:8081/zeroconf"
 
 def send(endpoint, data):
@@ -88,10 +88,5 @@ RGB: 0-255?
 '''
 
 if __name__ == "__main__":
-    power(False, 10)
-    sleep(DELAY)
-    power(True, 10)
-    sleep(DELAY)
-    color_temp(100, 100, 100)
-    sleep(DELAY)
-    rgb(100, 255, 0, 128, 100)
+    color_temp(1, 100, 100)
+    get_state()
