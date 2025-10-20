@@ -1,4 +1,4 @@
-from .config import matrix, MQTT_PYTHON_ZIGBEE2MQTT_TOPIC
+from .config import matrix, MQTT_PYTHON_ZIGBEE2MQTT_TOPIC, MQTT_Enabled
 from .mqtt import mqtt_send
 from time import sleep
 
@@ -48,17 +48,19 @@ def set_bulb_on_ct(x, y, color_temp, brightness):
     """
 
     # bounds check
-    if brightness < 0 or brightness > 254:
+    if brightness < 0 or brightness > 100:
         raise ValueError("brightness must be between 0 and 254")
     if color_temp < 153 or color_temp > 500:
         raise ValueError("color_temp must be between 153 and 500")
     if y < 0 or y >= len(matrix) or x < 0 or x >= len(matrix[0]):
         raise IndexError("x,y out of range")
 
-    payload = {"color_temp": color_temp, "brightness": brightness, "state": "ON"}
+    if MQTT_Enabled is True:
+        brightness_mqtt = map_range(brightness, 0, 100, 0, 254)
+        payload = {"color_temp": color_temp, "brightness": brightness_mqtt, "state": "ON"}
 
-    topic = MQTT_PYTHON_ZIGBEE2MQTT_TOPIC.format(DeviceName=matrix[y][x])
-    mqtt_send(topic, payload)
+        topic = MQTT_PYTHON_ZIGBEE2MQTT_TOPIC.format(DeviceName=matrix[y][x])
+        mqtt_send(topic, payload)
 
     # persist state for future reference
     LED_STATE[(x, y)] = {
@@ -85,9 +87,10 @@ def set_bulb_off(x, y):
     if y < 0 or y >= len(matrix) or x < 0 or x >= len(matrix[0]):
         raise IndexError("x,y out of range")
 
-    payload = {"state": "OFF"}
-    topic = MQTT_PYTHON_ZIGBEE2MQTT_TOPIC.format(DeviceName=matrix[y][x])
-    mqtt_send(topic, payload)
+    if MQTT_Enabled is True:
+        payload = {"state": "OFF"}
+        topic = MQTT_PYTHON_ZIGBEE2MQTT_TOPIC.format(DeviceName=matrix[y][x])
+        mqtt_send(topic, payload)
 
     # persist state for future reference; keep last known color_temp/brightness if present
     prev = LED_STATE.get((x, y), {})
@@ -138,6 +141,10 @@ def get_state():
 def get_bulb_state(x, y):
     """Return the stored state for a single bulb (x,y)."""
     return LED_STATE.get((x, y))
+
+
+def map_range(x, in_min, in_max, out_min, out_max):
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 
 
 ## AI made

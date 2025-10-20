@@ -1,7 +1,10 @@
+MQTT_Enabled = True
 MQTT_BROKER = "192.168.200.100"
 MQTT_PORT = 1883
 MQTT_USER = "mqtt"
 MQTT_PASS = "ChytreMQTT"
+
+SONOFF_Enabled = False
 
 TESTING = False  # If True, do not actually send MQTT messages
 
