@@ -54,7 +54,7 @@ def set_bulb_on_ct(x, y, color_temp, brightness):
     if color_temp < 0 or color_temp > 100: # 0 is the coolest, 100 is the warmest
         raise ValueError(f"color_temp is set {color_temp_sonoff} and must be between 0 and 100")
     if y < 0 or y >= len(matrix) or x < 0 or x >= len(matrix[0]):
-        raise IndexError("x,y out of range")
+        raise IndexError(f"x,y {x},{y} out of range")
 
     if DEBUG_PRINTS:
         print(f"DEBUG_PRINTS: set_bulb_on_ct({x}, {y}, {color_temp}, {brightness})")

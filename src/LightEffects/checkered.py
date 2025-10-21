@@ -2,15 +2,15 @@ from .. import led_hal
 from time import sleep
 
 
-def checkered(color_temp: int, brightness: int, delay: float = 0.1):
-    """Turn on bulbs in a checkered pattern.
+def checkered_effect(color_temp: int, brightness: int, delay: float = 0.1):
+    """Turn on bulbs in a checkered_effect pattern.
     Even row, even col and odd row, odd col are ON; others OFF.
     """
 
     # led_hal.XY is a (width, height) tuple; unpack it directly
     width, height = led_hal.XY
 
-    print("EFFECT: checkered()")
+    print("EFFECT: checkered_effect()")
 
     for y in range(height):
         for x in range(width):
