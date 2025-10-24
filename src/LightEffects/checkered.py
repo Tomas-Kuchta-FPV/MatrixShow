@@ -14,7 +14,7 @@ def checkered_effect(color_temp: int, brightness: int, delay: int = 10):
 
     for y in range(height):
         for x in range(width):
-            sleep(delay / height * width)    # step delay between setting each bulb
+            sleep(delay / width * height)    # step delay between setting each bulb
             if (x % 2) == (y % 2):
                 led_hal.set_bulb_on_ct(x, y, color_temp, brightness)
             else:
