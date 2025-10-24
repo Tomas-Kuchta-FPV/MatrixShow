@@ -16,19 +16,25 @@ def main():
     while True:
         LightEffects.love_effect(100, BRIGHTNESS, EFFECTS_INTERVAL)
         sleep(SLEEP_INTERVAL)
-        LightEffects.checkered_effect(100, BRIGHTNESS, 0.2)
+        LightEffects.checkered_effect(100, BRIGHTNESS, EFFECTS_INTERVAL/2)
         sleep(SLEEP_INTERVAL)
         LightEffects.random_effect(True, 0.1, 100)
         sleep(SLEEP_INTERVAL)
         led_hal.set_all_off(1)
-        LightEffects.zigzag_effect(0, BRIGHTNESS, 5)
+        LightEffects.zigzag_effect(0, BRIGHTNESS, EFFECTS_INTERVAL/2)
         sleep(SLEEP_INTERVAL/4)
-        LightEffects.zigzag_effect(100, BRIGHTNESS, 2)
+        LightEffects.zigzag_effect(100, BRIGHTNESS, EFFECTS_INTERVAL/4)
+        sleep(SLEEP_INTERVAL)
+        LightEffects.blink_all_effect(70, BRIGHTNESS, 4, 1)
+        sleep(SLEEP_INTERVAL)
+        LightEffects.candy_cane_effect(0, BRIGHTNESS, EFFECTS_INTERVAL/2)
+        sleep(SLEEP_INTERVAL/2)
+        LightEffects.checkered_effect(100, BRIGHTNESS, EFFECTS_INTERVAL)
+        sleep(SLEEP_INTERVAL)
+        LightEffects.random_effect(True, 0.1, 300)
+        sleep(SLEEP_INTERVAL/2)
 
 
-
-
-    everything() # Run all effects
 
 
 def everything():
