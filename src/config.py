@@ -9,7 +9,7 @@ MQTT_PORT = 1883
 MQTT_USER = "mqtt"
 MQTT_PASS = "ChytreMQTT"
 
-SONOFF_ENABLED = False
+SONOFF_ENABLED = True
 SONOFF_MS = 100 # transition time in ms for Sonoff DIY mode
 
 MQTT_PYTHON_ZIGBEE2MQTT_TOPIC = "zigbee2mqtt/{DeviceName}/set"
