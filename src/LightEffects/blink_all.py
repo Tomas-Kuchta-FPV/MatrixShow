@@ -2,7 +2,7 @@ from time import sleep
 from .. import led_hal
 
 
-def blink_all_effect(color_temp: int, brightness: int, blink_count: int = 2, blink_delay: int = 20) -> None:
+def blink_all_effect(color_temp: int, brightness: int, blink_count: int = 2, blink_delay: float = 20) -> None:
     """Blink all bulbs simultaneously blink_count times.
     Ensures all bulbs are turned off on exit.
 
