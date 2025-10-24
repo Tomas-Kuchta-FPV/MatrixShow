@@ -3,7 +3,7 @@ import time
 from .. import led_hal
 
 
-def random_effect(Erase = True, change_interval: int = 5, cycles: int = 10):
+def random_effect(Erase = True, change_interval: float = 5, cycles: int = 10):
     # led_hal.XY is a (width, height) tuple
     width, height = led_hal.XY
     print("EFFECT: random_effect()")

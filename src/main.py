@@ -6,8 +6,28 @@ from . import led_hal
 ## Import light effects
 from . import LightEffects
 
+SLEEP_INTERVAL = 20  # seconds between effects
+EFFECTS_INTERVAL = 10 # seconds between effects
+
+BRIGHTNESS = 100  # Brightness level (1-100)
+
 def main():
     init() # Initialize the application
+    while True:
+        LightEffects.love_effect(100, BRIGHTNESS, EFFECTS_INTERVAL)
+        sleep(SLEEP_INTERVAL)
+        LightEffects.checkered_effect(100, BRIGHTNESS, 0.2)
+        sleep(SLEEP_INTERVAL)
+        LightEffects.random_effect(True, 0.1, 100)
+        sleep(SLEEP_INTERVAL)
+        led_hal.set_all_off(1)
+        LightEffects.zigzag_effect(0, BRIGHTNESS, 5)
+        sleep(SLEEP_INTERVAL/4)
+        LightEffects.zigzag_effect(100, BRIGHTNESS, 2)
+
+
+
+
     everything() # Run all effects
 
 
@@ -25,7 +45,6 @@ def everything():
     LightEffects.zigzag_effect(100, 5, 2)
     sleep(5)
     led_hal.set_all_off(5)
-    sleep(5)
     LightEffects.candy_cane_effect(100, 5, 2)
     sleep(5)
     LightEffects.blink_all_effect(100, 3, 10, 0.1)

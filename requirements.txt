@@ -1,3 +1,4 @@
 # Project runtime requirements
 # Pinning paho-mqtt to the installed version to avoid unexpected breaking changes
 paho-mqtt==2.1.0
+requests==2.32.5

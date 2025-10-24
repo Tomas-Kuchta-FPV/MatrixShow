@@ -19,8 +19,9 @@ from src.led_hal import init_leds, set_bulb_on_ct, set_bulb_off, set_all_on_ct, 
 # Default visual settings
 LED_SIZE = 48
 PADDING = 40
-DEFAULT_COLOR_TEMP = 300  # within allowed 153-500
-DEFAULT_BRIGHTNESS = 200  # within allowed 0-254
+DEFAULT_COLOR_TEMP = 100  # within allowed 153-500
+DEFAULT_BRIGHTNESS = 1  # within allowed 0-254
+INTERPOLATION_DELAY = 1  # seconds for bulk on/off
 
 
 class LEDMatrixGUI:
@@ -150,7 +151,7 @@ class LEDMatrixGUI:
         def _worker():
             try:
                 # perform the potentially slow hardware calls off the GUI thread
-                set_all_on_ct(DEFAULT_COLOR_TEMP, DEFAULT_BRIGHTNESS, delay=5)
+                set_all_on_ct(DEFAULT_COLOR_TEMP, DEFAULT_BRIGHTNESS, INTERPOLATION_DELAY)
             except Exception as e:
                 print(f"Error during turn_all_on: {e}")
                 # ensure buttons are re-enabled even on error
@@ -176,7 +177,7 @@ class LEDMatrixGUI:
 
         def _worker():
             try:
-                set_all_off(delay=5)
+                set_all_off(INTERPOLATION_DELAY)
             except Exception as e:
                 print(f"Error during turn_all_off: {e}")
                 self.root.after(0, self.end_bulk_operation)

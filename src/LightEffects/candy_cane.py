@@ -3,9 +3,10 @@ from .. import led_hal
 
 def candy_cane_effect(color_temp, brightness,delay):
 
-    width, height = led_hal.XY
     print("EFFECT: candy_cane_effect()")
 
+    width, height = led_hal.XY
+    
     y = height - 1
     for x in range(width):
         led_hal.set_bulb_on_ct(x, y , color_temp, brightness)
