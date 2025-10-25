@@ -23,7 +23,7 @@ def power(ip, on: bool, ms: int):
 
 def color_temp(ip, brightness: int, ct: int, ms: int):
     # 0 = cold white, 255 = warm white (yes, reversed vs Kelvin)
-    send(ip, "dimmable", {"ltype": "white", "switch": "on", "white": {"br": brightness, "ct": ct, "slowlyLit": ms, "slowlyDimmed": ms}})
+    send(ip, "dimmable", {"ltype": "white", "white": {"br": brightness, "ct": ct, "slowlyLit": ms, "slowlyDimmed": ms}})
 
 
 def rgb(ip, brightness: int, r: int, g: int, b: int, ms: int):

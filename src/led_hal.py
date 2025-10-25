@@ -55,8 +55,6 @@ def set_bulb_on_ct(x, y, color_temp, brightness):
         raise ValueError(f"color_temp is set {color_temp_sonoff} and must be between 0 and 100")
     if y < 0 or y >= len(matrix) or x < 0 or x >= len(matrix[0]):
         raise IndexError(f"x,y {x},{y} out of range")
-    
-    device = matrix[y][x]
 
     if DEBUG_PRINTS:
         print(f"DEBUG_PRINTS: set_bulb_on_ct({x}, {y}, {color_temp}, {brightness})")
@@ -66,12 +64,13 @@ def set_bulb_on_ct(x, y, color_temp, brightness):
         color_temp_mqtt = map_range(color_temp, 0, 100, 153, 500)
         payload = {"color_temp": color_temp_mqtt, "brightness": brightness_mqtt, "state": "ON"}
 
-        topic = MQTT_PYTHON_ZIGBEE2MQTT_TOPIC.format(DeviceName=device)
+        topic = MQTT_PYTHON_ZIGBEE2MQTT_TOPIC.format(DeviceName=matrix[y][x])
         mqtt.send(topic, payload)
 
     if SONOFF_ENABLED is True:
         color_temp_sonoff = map_range(color_temp, 0, 100, 100, 0)
-        Sonoff_DIY_mode.color_temp(device, brightness, color_temp_sonoff, SONOFF_MS)
+        Sonoff_DIY_mode.color_temp(matrix[y][x], brightness, color_temp_sonoff, SONOFF_MS) # Prime it
+        Sonoff_DIY_mode.power(matrix[y][x], True, SONOFF_MS) # Turn it on
 
     # persist state for future reference
     LED_STATE[(x, y)] = {
@@ -80,7 +79,7 @@ def set_bulb_on_ct(x, y, color_temp, brightness):
         "y": y,
         "color_temp": color_temp,
         "brightness": brightness,
-        "device": device,
+        "device": matrix[y][x],
     }
     try:
         _save_state_to_disk(LED_STATE)
@@ -98,18 +97,16 @@ def set_bulb_off(x, y):
     if y < 0 or y >= len(matrix) or x < 0 or x >= len(matrix[0]):
         raise IndexError("x,y out of range")
     
-    device = matrix[y][x]
-    
     if DEBUG_PRINTS is True:
         print(f"DEBUG_PRINTS: set_bulb_off({x}, {y})")
 
     if MQTT_ENABLED is True:
         payload = {"state": "OFF"}
-        topic = MQTT_PYTHON_ZIGBEE2MQTT_TOPIC.format(DeviceName=device)
+        topic = MQTT_PYTHON_ZIGBEE2MQTT_TOPIC.format(DeviceName=matrix[y][x])
         mqtt.send(topic, payload)
 
     if SONOFF_ENABLED is True:
-        Sonoff_DIY_mode.power(device, False, SONOFF_MS)
+        Sonoff_DIY_mode.power(matrix[y][x], False, SONOFF_MS)
 
     # persist state for future reference; keep last known color_temp/brightness if present
     prev = LED_STATE.get((x, y), {})
@@ -119,7 +116,7 @@ def set_bulb_off(x, y):
         "y": y,
         "color_temp": prev.get("color_temp"),
         "brightness": prev.get("brightness", 0),
-        "device": device,
+        "device": matrix[y][x],
     }
     try:
         _save_state_to_disk(LED_STATE)
