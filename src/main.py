@@ -16,6 +16,7 @@ BRIGHTNESS = 100  # Brightness level (1-100)
 # Light show function definitions
 
 def light_show():
+    """Run a sequence of light effects."""
     #LightEffects.love_effect(100, BRIGHTNESS, EFFECTS_INTERVAL)
     #sleep(SLEEP_INTERVAL)
     LightEffects.checkered_effect(100, BRIGHTNESS, EFFECTS_INTERVAL/4)
@@ -64,20 +65,22 @@ def everything():
     sleep(DELAY)
     led_hal.set_all_off(DELAY)
     # zigzag_effect(color_temp, brightness, speed)
-    LightEffects.zigzag_effect(COLOR_TEMP, BRIGHTNESS, 2)
+    LightEffects.zigzag_effect(COLOR_TEMP, BRIGHTNESS, EFFECT_DELAY)
     sleep(DELAY)
     led_hal.set_all_off(DELAY)
     # candy_cane_effect(color_temp, brightness, speed)
-    LightEffects.candy_cane_effect(COLOR_TEMP, BRIGHTNESS, 2)
+    LightEffects.candy_cane_effect(COLOR_TEMP, BRIGHTNESS, EFFECT_DELAY)
     sleep(DELAY)
     # blink_all_effect with different params (times, interval)
     LightEffects.blink_all_effect(COLOR_TEMP, BRIGHTNESS, 3, 0.1)
     sleep(DELAY)
     # bubacci_effect(speed, brightness, repeats)
-    LightEffects.bubacci_effect(30, BRIGHTNESS, 2)
+    LightEffects.bubacci_effect(30, BRIGHTNESS, EFFECT_DELAY)
     sleep(DELAY)
     # smajlik_effect(color_temp, brightness, speed)
     LightEffects.smajlik_effect(COLOR_TEMP, BRIGHTNESS, 2)
+    sleep(DELAY)
+    LightEffects.snake_ai_effect(COLOR_TEMP,BRIGHTNESS,3,EFFECT_DELAY)
 
 
 
@@ -95,7 +98,8 @@ def main(): # Entry point
             sleep(30)
             continue
         
-        print("Scheduling: ON time - running light show")
+
+        print("EFFECT: Starting light show sequence")
         light_show()
 
 
