@@ -2,7 +2,7 @@ from time import sleep
 from collections import deque
 from .. import led_hal
 
-
+## AI made
 def _clamp(v, lo, hi):
     return max(lo, min(hi, v))
 
@@ -23,17 +23,32 @@ def snake_ai_effect(color_temp, brightness, tail: int, delay: float):
     width = len(led_hal.matrix[0])
     height = len(led_hal.matrix)
 
-    # if tail is not positive, behave like original simple snake but with configurable delay
+    # compute per-action sleep so `delay` approximates the total runtime
+    # total actions = number of head moves (width*height) + cleanup turns (expected trail length)
+    if delay is None or delay <= 0:
+        per_step_sleep = 0.0
+    else:
+        if tail is None or tail <= 0:
+            expected_trail_len = 0
+        else:
+            expected_trail_len = min(tail + 1, width * height)
+        total_actions = width * height + expected_trail_len
+        per_step_sleep = float(delay) / total_actions if total_actions > 0 else 0.0
+
+    # if tail is not positive, behave like original simple snake but use per_step_sleep
     if tail is None or tail <= 0:
         for x in range(width):
             for y in range(height):
                 led_hal.set_bulb_on_ct(x, y, color_temp, brightness)
-                sleep(delay)
+                if per_step_sleep:
+                    sleep(per_step_sleep)
                 led_hal.set_bulb_off(x, y)
         return
 
     # maintain recent positions as deque of (x,y)
-    trail = deque(maxlen=tail + 1)  # include head
+    # use an unbounded deque and manually pop oldest entries so we can turn off
+    # only the exact LED that left the trail instead of clearing the whole matrix
+    trail = deque()
 
     # iterate left-to-right, but alternate vertical direction per column
     for x in range(width):
@@ -66,20 +81,26 @@ def snake_ai_effect(color_temp, brightness, tail: int, delay: float):
                 else:
                     led_hal.set_bulb_on_ct(tx, ty, color_temp, b)
 
-            # if the deque filled beyond maxlen the oldest was removed automatically; ensure the removed spot is off
-            # because maxlen auto discards, we can compute the next-oldest position to turn off
-            if len(trail) == trail.maxlen:
-                # the last element in deque is the tail end that should remain lit; the one removed (if any) should be off
-                # to safely turn off any LED not in trail, we can compute all coordinates and turn off ones not present
-                present = set(trail)
-                # quick pass to turn off any LED that was previously on but is no longer part of the trail
-                # iterate over the full matrix and turn off bulbs not in present that have state ON
-                for yy in range(height):
-                    for xx in range(width):
-                        if (xx, yy) not in present:
-                            # consult stored state to avoid unnecessary MQTT calls
-                            state = led_hal.get_bulb_state(xx, yy)
-                            if state and state.get("state") == "ON":
-                                led_hal.set_bulb_off(xx, yy)
+            # if the trail is now longer than allowed, pop the oldest and turn THAT one off only
+            maxlen = (tail + 1) if tail is not None and tail >= 0 else None
+            if maxlen is not None and len(trail) > maxlen:
+                # oldest coordinate goes to the right end
+                removed = trail.pop()
+                rx, ry = removed
+                # turn off that specific LED if it's still ON
+                state = led_hal.get_bulb_state(rx, ry)
+                if state and state.get("state") == "ON":
+                    led_hal.set_bulb_off(rx, ry)
 
-            sleep(delay)
+            if per_step_sleep:
+                sleep(per_step_sleep)
+
+    # after finishing the traversal, clear out any remaining trail so no LEDs stay lit
+    while trail:
+        tx, ty = trail.popleft()
+        state = led_hal.get_bulb_state(tx, ty)
+        if state and state.get("state") == "ON":
+            led_hal.set_bulb_off(tx, ty)
+        # small pause so hardware/broker isn't flooded; use per-step sleep so total runtime ~= delay
+        if per_step_sleep:
+            sleep(per_step_sleep)

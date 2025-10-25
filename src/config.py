@@ -1,6 +1,6 @@
 #You can Choose from various configuration options below.
 
-DEBUG_PRINTS = False  # Set to True to enable debug prints
+DEBUG_PRINTS = True  # Set to True to enable debug prints
 
 # MQTT Configuration
 MQTT_ENABLED = False

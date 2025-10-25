@@ -11,35 +11,30 @@ from . import led_hal
 SLEEP_INTERVAL = 15  # seconds between effects
 EFFECTS_INTERVAL = 8 # seconds between effects
 
+COLOR_TEMP = 80  # Color temperature (0-100)
 BRIGHTNESS = 100  # Brightness level (1-100)
 
 # Light show function definitions
 
 def light_show():
     """Run a sequence of light effects."""
-    #LightEffects.love_effect(100, BRIGHTNESS, EFFECTS_INTERVAL)
-    #sleep(SLEEP_INTERVAL)
-    LightEffects.checkered_effect(100, BRIGHTNESS, EFFECTS_INTERVAL/4)
-    sleep(SLEEP_INTERVAL)
-    LightEffects.random_effect(False, 0.01, 100)
+    LightEffects.random_effect(COLOR_TEMP, False, 0.01, 100)
     led_hal.set_all_off(1)
     LightEffects.zigzag_effect(0, BRIGHTNESS, EFFECTS_INTERVAL/2)
     sleep(SLEEP_INTERVAL/4)
     LightEffects.zigzag_effect(100, BRIGHTNESS, EFFECTS_INTERVAL/4)
     sleep(SLEEP_INTERVAL)
-    LightEffects.blink_all_effect(100, BRIGHTNESS, 1, 1)
-    LightEffects.blink_all_effect(0, BRIGHTNESS, 1, 1)
+    LightEffects.blink_all_effect(0, BRIGHTNESS, 2, 1)
     sleep(SLEEP_INTERVAL/4)
-    LightEffects.bubacci_effect(30, BRIGHTNESS, EFFECTS_INTERVAL/4)
+    LightEffects.bubacci_effect(COLOR_TEMP, BRIGHTNESS, EFFECTS_INTERVAL/4)
     sleep(SLEEP_INTERVAL)
     led_hal.set_all_off(1)
-    LightEffects.candy_cane_effect(0, BRIGHTNESS, EFFECTS_INTERVAL/2)
+    LightEffects.candy_cane_effect(COLOR_TEMP, BRIGHTNESS, EFFECTS_INTERVAL/2)
     sleep(SLEEP_INTERVAL/2)
-    LightEffects.checkered_effect(100, BRIGHTNESS, EFFECTS_INTERVAL/4)
-    #LightEffects.love_effect(BRIGHTNESS, 0, EFFECTS_INTERVAL/8)
+    LightEffects.checkered_effect(0, BRIGHTNESS, EFFECTS_INTERVAL/4)
+    LightEffects.snake_ai_effect(COLOR_TEMP, BRIGHTNESS, 3, EFFECTS_INTERVAL)
     sleep(SLEEP_INTERVAL)
-    LightEffects.random_effect(False, 0.01, 300)
-    #LightEffects.smajlik_effect(100, BRIGHTNESS, EFFECTS_INTERVAL/4)
+    LightEffects.fil_step_effect(COLOR_TEMP,BRIGHTNESS,0.1,3)
     sleep(SLEEP_INTERVAL)
 
 

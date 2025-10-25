@@ -7,3 +7,4 @@ from .candy_cane import candy_cane_effect
 from .bubacci import bubacci_effect
 from .smajlik import smajlik_effect
 from .snake_ai import snake_ai_effect
+from .fil_step import fil_step_effect
