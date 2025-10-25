@@ -20,7 +20,7 @@ from src.led_hal import init_leds, set_bulb_on_ct, set_bulb_off, set_all_on_ct, 
 LED_SIZE = 48
 PADDING = 40
 DEFAULT_COLOR_TEMP = 100  # within allowed 153-500
-DEFAULT_BRIGHTNESS = 1  # within allowed 0-254
+DEFAULT_BRIGHTNESS = 100  # within allowed 0-254
 INTERPOLATION_DELAY = 1  # seconds for bulk on/off
 
 
