@@ -1,20 +1,31 @@
 #You can Choose from various configuration options below.
 
-DEBUG_PRINTS = True
+DEBUG_PRINTS = False  # Set to True to enable debug prints
 
-
+# MQTT Configuration
 MQTT_ENABLED = False
 MQTT_BROKER = "192.168.200.100"
 MQTT_PORT = 1883
 MQTT_USER = "mqtt"
 MQTT_PASS = "ChytreMQTT"
 
-SONOFF_ENABLED = True
-SONOFF_MS = 100 # transition time in ms for Sonoff DIY mode
-
 MQTT_PYTHON_ZIGBEE2MQTT_TOPIC = "zigbee2mqtt/{DeviceName}/set"
 
 MQTT_PYTHON_INFO_TOPIC = "python/info"
+
+# Sonoff DIY mode configuration
+SONOFF_ENABLED = False
+SONOFF_MS = 100 # transition time in ms for Sonoff DIY mode
+
+
+# Scheduling options
+# Set to True to enable automatic on/off by time (local system time)
+SCHEDULE_ENABLED = False
+# Times are in 24h "HH:MM" format. Examples: "08:00" or "22:30"
+ON_TIME = "14:52"   # time to turn on effects
+OFF_TIME = "14:55"  # time to turn off effects
+
+# If you prefer a different timezone handling, implement it in main.py
 
 ## LED Configuration
 ### for MQTT friendly names
