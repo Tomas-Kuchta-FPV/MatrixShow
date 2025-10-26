@@ -1,5 +1,5 @@
 from time import sleep
-from .. import led_hal
+from . import led_hal
 
 def render_matrix(pixel_map, brightness, color_temp, delay: float):
     """Renders a given pixel map on the LED matrix.

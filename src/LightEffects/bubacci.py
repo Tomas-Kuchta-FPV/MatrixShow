@@ -1,5 +1,5 @@
 from .. import led_hal
-from .Renderer import render_matrix
+from ..renderer import render_matrix
 
 def bubacci_effect(color_temp, brightness, delay):
     print("EFFECT: bubacci_effect()")

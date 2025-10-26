@@ -1,6 +1,6 @@
 from time import sleep
 from .. import led_hal
-from .Renderer import render_matrix
+from ..renderer import render_matrix
 
 def love_effect(brightness = 100, color_temp = 100, delay: float = 1.0):
     """
