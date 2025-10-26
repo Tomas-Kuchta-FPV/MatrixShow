@@ -1,4 +1,4 @@
-from .config import matrix, MQTT_PYTHON_ZIGBEE2MQTT_TOPIC, MQTT_ENABLED, DEBUG_PRINTS, SONOFF_ENABLED, SONOFF_MS
+from .config import matrix, MQTT_PYTHON_ZIGBEE2MQTT_TOPIC, ZIGBEE2MQTT_ENABLED, DEBUG_PRINTS, SONOFF_ENABLED, SONOFF_MS
 from time import sleep
 
 from .Protocols import Sonoff_DIY_mode, mqtt
@@ -59,7 +59,7 @@ def set_bulb_on_ct(x, y, color_temp, brightness):
     if DEBUG_PRINTS:
         print(f"DEBUG_PRINTS: set_bulb_on_ct({x}, {y}, {color_temp}, {brightness})")
 
-    if MQTT_ENABLED is True:
+    if ZIGBEE2MQTT_ENABLED is True:
         brightness_mqtt = map_range(brightness, 0, 100, 0, 254)
         color_temp_mqtt = map_range(color_temp, 0, 100, 153, 500)
         payload = {"color_temp": color_temp_mqtt, "brightness": brightness_mqtt, "state": "ON"}
@@ -100,7 +100,7 @@ def set_bulb_off(x, y):
     if DEBUG_PRINTS is True:
         print(f"DEBUG_PRINTS: set_bulb_off({x}, {y})")
 
-    if MQTT_ENABLED is True:
+    if ZIGBEE2MQTT_ENABLED is True:
         payload = {"state": "OFF"}
         topic = MQTT_PYTHON_ZIGBEE2MQTT_TOPIC.format(DeviceName=matrix[y][x])
         mqtt.send(topic, payload)
