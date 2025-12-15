@@ -1,0 +1,15 @@
+services:
+  homeassistant:
+    container_name: homeassistant-Svetlo
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - /home/svetlo/MatrixShow/Hass/config:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    #devices:
+    #  - /dev/ttyUSB0:/dev/ttyUSB0
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    environment:
+      TZ: Europe/Prague

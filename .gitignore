@@ -210,3 +210,6 @@ __marimo__/
 ## Code-base specific
 led_state.json
 src/config.py
+
+## Home assistant
+config/*
