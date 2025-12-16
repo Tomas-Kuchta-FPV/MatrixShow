@@ -1,3 +1,20 @@
+"""
+Simple MQTT protocol helper.
+
+This module wraps a paho-mqtt client used by the project to publish/subscribe
+to MQTT topics.
+
+Sample `matrix` / config fields (examples):
+- Per-device entry: ["mqtt", "<device_name>", "<topic>"]
+- Global config expected in `src/config.py`:
+    - `MQTT_BROKER` (string) - broker host or IP
+    - `MQTT_PORT` (int) - broker port
+    - `MQTT_USER`, `MQTT_PASS` (optional credentials)
+    - `MQTT_PYTHON_INFO_TOPIC` (topic to publish python status)
+
+Example:
+    matrix = [["mqtt", "living_room_light", "zigbee2mqtt/living_room_light"]]
+"""
 from ..config import DEBUG_PRINTS
 from ..config import MQTT_BROKER, MQTT_PORT, MQTT_USER, MQTT_PASS, MQTT_PYTHON_INFO_TOPIC
 import json

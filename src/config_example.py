@@ -17,6 +17,12 @@ MQTT_PYTHON_INFO_TOPIC = "python/info"
 SONOFF_ENABLED = False
 SONOFF_MS = 100 # transition time in ms for Sonoff DIY mode
 
+# Homeassistant Configuration on websocket
+HOMEASSISTANT_ENABLED = True
+HOMEASSISTANT_URL = "ws://localhost:8123"
+# A long-lived access token from your Home Assistant user
+HOMEASSISTANT_TOKEN = ""
+
 
 # Scheduling options
 # Set to True to enable automatic on/off by time (local system time)

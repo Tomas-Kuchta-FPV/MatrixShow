@@ -1,3 +1,19 @@
+"""
+Sonoff DIY mode helpers.
+
+This module speaks the Sonoff local HTTP API exposed in DIY mode (port 8081).
+Use these helpers to send power, color and white-temperature commands to
+Sonoff devices running DIY firmware.
+
+Sample `matrix` / config fields (examples):
+- Per-device entry: ["sonoff", "<ip>", "<device_name>"]
+    e.g. ["sonoff", "192.168.1.50", "kitchen_strip"]
+
+Notes:
+- The functions expect an IP address; the project may populate the `matrix`
+    with IPs discovered from mDNS/your inventory.
+"""
+
 import requests # pip install requests
 
 SONOFF_DEBUG = False
