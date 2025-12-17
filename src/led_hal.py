@@ -1,4 +1,5 @@
-from .config import matrix, MQTT_PYTHON_ZIGBEE2MQTT_TOPIC, ZIGBEE2MQTT_ENABLED, DEBUG_PRINTS, SONOFF_ENABLED, SONOFF_MS
+from .config import matrix, MQTT_PYTHON_ZIGBEE2MQTT_TOPIC, ZIGBEE2MQTT_ENABLED, DEBUG_PRINTS, SONOFF_ENABLED, SONOFF_MS, HOMEASSISTANT_ENABLED
+from .Protocols.homeassistant_ws import call_service as ha_call_service
 from time import sleep
 
 from .Protocols import Sonoff_DIY_mode, mqtt
@@ -87,6 +88,15 @@ def set_bulb_on_ct(x, y, color_temp, brightness):
         # non-fatal: don't break hardware control if disk save fails
         pass
 
+    # Home Assistant WebSocket control (entity ids like "light.foo")
+    if HOMEASSISTANT_ENABLED is True:
+        # map color_temp 0-100 to Home Assistant color_temp (mireds)
+        color_temp_ha = int(map_range(color_temp, 0, 100, 153, 500))
+        try:
+            ha_call_service('light', 'turn_on', {"entity_id": matrix[y][x], "brightness_pct": int(brightness), "color_temp": color_temp_ha})
+        except Exception:
+            if DEBUG_PRINTS: print("HA WS: failed to call turn_on")
+
 
 def set_bulb_off(x, y):
     """Turn off bulb at position (x, y).
@@ -107,6 +117,12 @@ def set_bulb_off(x, y):
 
     if SONOFF_ENABLED is True:
         Sonoff_DIY_mode.power(matrix[y][x], False, SONOFF_MS)
+
+    if HOMEASSISTANT_ENABLED is True:
+        try:
+            ha_call_service('light', 'turn_off', {"entity_id": matrix[y][x]})
+        except Exception:
+            if DEBUG_PRINTS: print("HA WS: failed to call turn_off")
 
     # persist state for future reference; keep last known color_temp/brightness if present
     prev = LED_STATE.get((x, y), {})

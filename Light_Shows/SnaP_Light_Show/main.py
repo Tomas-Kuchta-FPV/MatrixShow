@@ -11,8 +11,8 @@ from . import led_hal
 SLEEP_INTERVAL = 15  # seconds between effects
 EFFECTS_INTERVAL = 8 # seconds between effects
 
-COLOR_TEMP = 80  # Color temperature (0-100)
-BRIGHTNESS = 100  # Brightness level (1-100)
+COLOR_TEMP = 100  # Color temperature (0-100)
+BRIGHTNESS = 1  # Brightness level (1-100)
 
 # Light show function definitions
 
@@ -20,7 +20,11 @@ def light_show():
     """Run a sequence of light effects.
     Put here your preferred sequence of effects.
     """
+    led_hal.set_all_on_ct(COLOR_TEMP, BRIGHTNESS, EFFECTS_INTERVAL)
+    led_hal.set_all_off(EFFECTS_INTERVAL)
+    sleep(2)
     everything()
+
 
 
 # A python function to run all effects in sequence
@@ -32,7 +36,7 @@ def everything():
     COLOR_TEMP = 100
 
     # love_effect(color_temp, brightness, duration)
-    LightEffects.love_effect(COLOR_TEMP, BRIGHTNESS, EFFECT_DELAY)
+    #LightEffects.love_effect(COLOR_TEMP, BRIGHTNESS, EFFECT_DELAY)
     sleep(DELAY)
     # blink_all_effect(color_temp, brightness, times, interval)
     LightEffects.blink_all_effect(COLOR_TEMP, BRIGHTNESS, 3, 1)
@@ -55,10 +59,10 @@ def everything():
     LightEffects.blink_all_effect(COLOR_TEMP, BRIGHTNESS, 3, 0.1)
     sleep(DELAY)
     # bubacci_effect(speed, brightness, repeats)
-    LightEffects.bubacci_effect(30, BRIGHTNESS, EFFECT_DELAY)
+    #LightEffects.bubacci_effect(30, BRIGHTNESS, EFFECT_DELAY)
     sleep(DELAY)
     # smajlik_effect(color_temp, brightness, speed)
-    LightEffects.smajlik_effect(COLOR_TEMP, BRIGHTNESS, 2)
+    #LightEffects.smajlik_effect(COLOR_TEMP, BRIGHTNESS, 2)
     sleep(DELAY)
     LightEffects.snake_ai_effect(COLOR_TEMP,BRIGHTNESS,3,EFFECT_DELAY)
 
